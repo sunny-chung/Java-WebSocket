@@ -485,8 +485,8 @@ public abstract class WebSocketClient extends AbstractWebSocket implements Runna
         sslSocket.setSSLParameters(sslParameters);
       }
 
-      istream = socket.getInputStream();
-      ostream = socket.getOutputStream();
+      istream = wrapInputStream(socket.getInputStream());
+      ostream = wrapOutputStream(socket.getOutputStream());
 
       sendHandshake();
     } catch (/*IOException | SecurityException | UnresolvedAddressException | InvalidHandshakeException | ClosedByInterruptException | SocketTimeoutException */Exception e) {
@@ -524,6 +524,14 @@ public abstract class WebSocketClient extends AbstractWebSocket implements Runna
       engine.closeConnection(CloseFrame.ABNORMAL_CLOSE, e.getMessage());
     }
     connectReadThread = null;
+  }
+
+  protected OutputStream wrapOutputStream(OutputStream os) {
+    return os;
+  }
+
+  protected InputStream wrapInputStream(InputStream is) {
+    return is;
   }
 
   private void upgradeSocketToSSL()
