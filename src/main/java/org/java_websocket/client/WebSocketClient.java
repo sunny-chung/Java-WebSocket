@@ -471,6 +471,7 @@ public abstract class WebSocketClient extends AbstractWebSocket implements Runna
       if (!socket.isConnected()) {
         InetSocketAddress addr = dnsResolver == null ? InetSocketAddress.createUnresolved(uri.getHost(), getPort()) : new InetSocketAddress(dnsResolver.resolve(uri), this.getPort());
         socket.connect(addr, connectTimeout);
+        onConnect(addr);
       }
 
       // if the socket is set by others we don't apply any TLS wrapper
@@ -532,6 +533,10 @@ public abstract class WebSocketClient extends AbstractWebSocket implements Runna
 
   protected InputStream wrapInputStream(InputStream is) {
     return is;
+  }
+
+  protected void onConnect(InetSocketAddress address) {
+
   }
 
   private void upgradeSocketToSSL()
