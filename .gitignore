@@ -12,6 +12,7 @@ target
 .project
 .classpath
 bin
+gradle.properties
 
 /doc
 *.xml

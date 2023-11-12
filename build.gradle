@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'idea'
     id 'maven-publish'
+    id 'signing'
 }
 
 repositories {
@@ -9,7 +10,7 @@ repositories {
     mavenCentral()
 }
 
-group = 'org.java-websocket'
+group = 'io.github.sunny-chung'
 version = '1.5.4-inspect-patch1'
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
@@ -20,9 +21,19 @@ compileJava {
 
 javadoc {
     options.encoding = 'UTF-8'
+    
+    // generate an empty javadoc because
+    // don't want to deal with endless errors like
+    // "error: tag not supported in HTML5: tt"
+    exclude '**'
 }
 
 publishing {
+    java {
+        withJavadocJar()
+        withSourcesJar()
+    }
+
     publications {
         maven(MavenPublication) {
             groupId = project.group
@@ -30,7 +41,51 @@ publishing {
             version = project.version
 
             from components.java
+
+            pom {
+                name = 'Java-WebSocket'
+                description = 'A barebones WebSocket client and server implementation written 100% in Java'
+                url = 'https://github.com/TooTallNate/Java-WebSocket'
+                licenses {
+                    license {
+                        name = 'MIT License'
+                        url = 'https://github.com/TooTallNate/Java-WebSocket/blob/master/LICENSE'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'TooTallNate'
+                        name = 'Nathan Rajlich'
+                        url = 'https://github.com/TooTallNate'
+                        email = 'nathan@tootallnate.net'
+                    }
+                    developer {
+                        id = 'marci4'
+                        name = 'Marcel Prestel'
+                        url = 'https://github.com/marci4'
+                        email = 'admin@marci4.de'
+                    }
+                }
+                scm {
+                    url = 'https://github.com/TooTallNate/Java-WebSocket'
+                }
+            }
         }
+    }
+
+    repositories {
+        maven {
+            name = "sonatype"
+            url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+            credentials {
+                username = SONATYPE_NEXUS_USERNAME
+                password = SONATYPE_NEXUS_PASSWORD
+            }
+        }
+    }
+
+    signing {
+        sign publishing.publications.maven
     }
 }
 
